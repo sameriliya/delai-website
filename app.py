@@ -1,14 +1,34 @@
 import streamlit as st
+import datetime
+
+
+st.set_page_config(
+            page_title="Delai", # => Quick reference - Streamlit
+            page_icon=":airplane:",
+            layout="centered", # wide
+            initial_sidebar_state="auto") # collapsed
+
 
 '''
-# TaxiFareModel front
+# Delai
 '''
 
 st.markdown('''
-Remember that there are several ways to output content into your web page...
-
-Either as with the title by just creating a string (or an f-string). Or as with this paragraph using the `st.` functions
+Give us your flight details
 ''')
+
+col1, col2 = st.columns(2)
+
+with col1:
+    flight_number = st.text_input('Flight Number')
+
+with col2:
+    d = st.date_input(
+    "Flight date",
+    datetime.date.today())
+
+
+
 
 '''
 ## Here we would like to add some controllers in order to ask the user to select the parameters of the ride
