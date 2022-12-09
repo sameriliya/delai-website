@@ -1,5 +1,5 @@
 mlflow==1.30.0
 pandas
 numpy
-dateutil
+#dateutil
 tensorflow==2.8.0
