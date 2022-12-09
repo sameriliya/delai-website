@@ -1,6 +1,6 @@
 import streamlit as st
 import datetime
-
+from model import pred
 
 st.set_page_config(
             page_title="Delai", # => Quick reference - Streamlit
@@ -8,9 +8,8 @@ st.set_page_config(
             layout="centered", # wide
             initial_sidebar_state="auto") # collapsed
 
-
 '''
-# Delai
+# DelAI
 '''
 
 st.markdown('''
@@ -27,42 +26,12 @@ with col2:
     "Flight date",
     datetime.date.today())
 
+if st.button('Predict my delay!'):
+        with st.spinner("Working hard to get your prediction..."):
+            prediction = pred(flight_number=flight_number, date=d)
+            st.balloons()
 
-
-
-'''
-## Here we would like to add some controllers in order to ask the user to select the parameters of the ride
-
-1. Let's ask for:
-- date and time
-- pickup longitude
-- pickup latitude
-- dropoff longitude
-- dropoff latitude
-- passenger count
-'''
-
-'''
-## Once we have these, let's call our API in order to retrieve a prediction
-
-See ? No need to load a `model.joblib` file in this app, we do not even need to know anything about Data Science in order to retrieve a prediction...
-
-🤔 How could we call our API ? Off course... The `requests` package 💡
-'''
-
-url = 'https://taxifare.lewagon.ai/predict'
-
-if url == 'https://taxifare.lewagon.ai/predict':
-
-    st.markdown('Maybe you want to use your own API for the prediction, not the one provided by Le Wagon...')
-
-'''
-
-2. Let's build a dictionary containing the parameters for our API...
-
-3. Let's call our API using the `requests` package...
-
-4. Let's retrieve the prediction from the **JSON** returned by the API...
-
-## Finally, we can display the prediction to the user
-'''
+            f'''
+            # Our prediction:
+            ## {round(prediction*100, 2)}% chance of flight delay of 30 mins or more!
+            '''

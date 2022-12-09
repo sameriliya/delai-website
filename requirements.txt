@@ -1,0 +1,5 @@
+mlflow==1.30.0
+pandas
+numpy
+dateutil
+tensorflow==2.8.0
