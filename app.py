@@ -2,11 +2,16 @@ import streamlit as st
 import datetime
 from model import pred
 
+import pandas as pd
+import numpy as np
+
+
 st.set_page_config(
             page_title="Delai", # => Quick reference - Streamlit
             page_icon=":airplane:",
             layout="centered", # wide
             initial_sidebar_state="auto") # collapsed
+
 
 '''
 # DelAI
@@ -35,3 +40,11 @@ if st.button('Predict my delay!'):
             # Our prediction:
             ## {round(prediction*100, 2)}% chance of flight delay of 30 mins or more!
             '''
+
+
+
+df = pd.DataFrame(
+    np.random.randn(1000, 2) / [50, 50] + [37.76, -122.4],
+    columns=['lat', 'lon'])
+
+st.map(df)
