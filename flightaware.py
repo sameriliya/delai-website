@@ -136,5 +136,26 @@ def get_processed_flight_details(flight_number='DAL383', date=datetime.date.toda
     expanded_date_details = extract_info_from_datetime_col(raw_details_localised)
     return clean_df(expanded_date_details)
 
+def get_airport_details_dict(airport_code):
+    AEROAPI_BASE_URL = "https://aeroapi.flightaware.com/aeroapi/airports/"
+    AEROAPI_KEY = os.environ.get("FA_API_KEY")
+    AEROAPI = requests.Session()
+    AEROAPI.headers.update({"x-apikey": AEROAPI_KEY})
+
+    full_url = AEROAPI_BASE_URL + airport_code
+    response = AEROAPI.get(full_url,)
+    response_json = response.json()
+
+    if response.ok:
+        name = response_json['name']
+        location = f"{response_json['city']},{response_json['state']}"
+        lat = response_json['latitude']
+        lon = response_json['longitude']
+        return {'name':name, 'location':location, 'lat':lat, 'lon':lon}
+    else:
+        print("Couldn't find airport")
+        return {'name':'N/A', 'location':'N/A', 'lat':'N/A', 'lon':'N/A'}
+
+
 if __name__ == '__main__':
-    print(get_processed_flight_details())
+    print(get_processed_flight_details(flight_number='DAL383', date=datetime.date(2022,12,9)))
