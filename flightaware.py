@@ -32,11 +32,13 @@ def get_raw_flight_details(flight_number='UAL4', date=datetime.date.today()):
             return response_json['flights']
         if len(response_json['flights']) == 0:
             print('Cannot find a flight with that Flight Number / Date combo. Please try again...')
+            return None
         if len(response_json['flights']) > 1:
             print('More than 1 flight returned... Please filter your search further...')
+            return [response_json['flights'][0]]
     else:
         print('Bad API response')
-        return 'Bad API response'
+        return None
 
 
 def localize_time(time, timezone):
@@ -129,7 +131,7 @@ def get_processed_flight_details(flight_number='DAL383', date=datetime.date.toda
     return a cleaned dataframe of flight details to pass into an ML model
     '''
     raw_details = get_raw_flight_details(flight_number, date)
-    if raw_details == 'Bad API response':
+    if raw_details == None:
         print('There has been an issue connecting to the Flightaware API')
         return
     raw_details_localised = add_local_times(raw_details)

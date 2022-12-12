@@ -913,6 +913,15 @@ def pred(flight_number='DAL383', date=datetime.date.today()) -> np.ndarray:
     df_new = get_processed_flight_details(flight_number, date).drop(columns = 'FlightDate')
     X_processed = preprocess_X(df_new)
     print(X_processed)
+    print('o_'+X_processed['Origin'][0])
+    print('o_'+X_processed['Dest'][0])
+
+    if 'o_'+X_processed['Origin'][0] not in COLUMN_NAMES_PROCESSED:
+        print("We don't support international flights yet!")
+        return None
+    if 'd_'+X_processed['Dest'][0] not in COLUMN_NAMES_PROCESSED:
+        print("We don't support international flights yet!")
+        return None
 
     encoded_df = return_dummies_df(X_processed)
     df_tot = pd.DataFrame(columns = COLUMN_NAMES_PROCESSED)
@@ -922,6 +931,9 @@ def pred(flight_number='DAL383', date=datetime.date.today()) -> np.ndarray:
     X_new = df_concat.drop(columns=['y','Origin','Dest','Marketing_Airline_Network'])
     print(X_new)
     model = load_model()
+    if model == None:
+        print('No model in production. Cannot make predictions!')
+        return None
     y_pred = model.predict(X_new.to_numpy())
 
     print("\n✅ prediction done: ", y_pred, y_pred.shape)
@@ -929,4 +941,4 @@ def pred(flight_number='DAL383', date=datetime.date.today()) -> np.ndarray:
     return y_pred[0][0]
 
 if __name__ == '__main__':
-    print(pred())
+    print(pred(flight_number='UAL1'))
