@@ -24,30 +24,13 @@ def get_raw_flight_details(flight_number='UAL4', date=datetime.date.today()):
              }
 
     response = AEROAPI.get(full_url, params = params)
-
-    response_json = response.json()
-
-    if response.ok:
-        if len(response_json['flights']) == 1:
-            return response_json['flights']
-        if len(response_json['flights']) == 0:
-            print('Cannot find a flight with that Flight Number / Date combo. Please try again...')
-            return None
-        if len(response_json['flights']) > 1:
-            print('More than 1 flight returned... Please filter your search further...')
-            return [response_json['flights'][0]]
-    else:
-        print('Bad API response')
-        return None
-
+    return response
 
 def localize_time(time, timezone):
     '''Helper function to localize UTC datetime object when given a timezone
     '''
     to_zone = tz.gettz(timezone)
     return time.astimezone(to_zone)
-
-
 
 def add_local_times(raw_details):
     '''
@@ -125,19 +108,6 @@ def clean_df(df):
 
     return df_out
 
-
-def get_processed_flight_details(flight_number='DAL383', date=datetime.date.today()):
-    '''Given a flight number and date of travel, use functions to
-    return a cleaned dataframe of flight details to pass into an ML model
-    '''
-    raw_details = get_raw_flight_details(flight_number, date)
-    if raw_details == None:
-        print('There has been an issue connecting to the Flightaware API')
-        return
-    raw_details_localised = add_local_times(raw_details)
-    expanded_date_details = extract_info_from_datetime_col(raw_details_localised)
-    return clean_df(expanded_date_details)
-
 def get_airport_details_dict(airport_code):
     AEROAPI_BASE_URL = "https://aeroapi.flightaware.com/aeroapi/airports/"
     AEROAPI_KEY = os.environ.get("FA_API_KEY")
@@ -145,7 +115,9 @@ def get_airport_details_dict(airport_code):
     AEROAPI.headers.update({"x-apikey": AEROAPI_KEY})
 
     full_url = AEROAPI_BASE_URL + airport_code
+
     response = AEROAPI.get(full_url,)
+
     response_json = response.json()
 
     if response.ok:
@@ -155,9 +127,35 @@ def get_airport_details_dict(airport_code):
         lon = response_json['longitude']
         return {'name':name, 'location':location, 'lat':lat, 'lon':lon}
     else:
+        print(response)
         print("Couldn't find airport")
         return {'name':'N/A', 'location':'N/A', 'lat':'N/A', 'lon':'N/A'}
 
+def get_processed_flight_details(flight_number='DAL383', date=datetime.date.today()):
+    '''Given a flight number and date of travel, use functions to
+    return a cleaned dataframe of flight details to pass into an ML model
+    '''
+    response = get_raw_flight_details(flight_number=flight_number, date=date)
+
+    if not response.ok:
+        print('Add in actions for bad API call')
+    if response.ok:
+        flights = response.json()['flights']
+        print(len(flights))
+        if len(flights) == 0:
+            print('Add action for no flights found')
+            return
+        if len(flights) > 1:
+            print('Add action for more than one flight on that day with same flight no')
+            df = pd.DataFrame(flights) # this will return a df with multiple rows
+            return
+        if len(flights) == 1:
+            df = pd.DataFrame(flights)
+            df = add_local_times(df)
+            df = extract_info_from_datetime_col(df)
+            X_new = clean_df(df)
+            return X_new
+
 
 if __name__ == '__main__':
-    print(get_processed_flight_details(flight_number='DAL383', date=datetime.date(2022,12,9)))
+    print(get_processed_flight_details(flight_number='DAL383', date=datetime.date(2022,12,13)))
