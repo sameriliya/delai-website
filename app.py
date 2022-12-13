@@ -14,12 +14,6 @@ st.set_page_config(
             layout="centered", # wide
             initial_sidebar_state="auto") # collapsed
 
-# def img_to_bytes(img_path):
-#     img_bytes = Path(img_path).read_bytes()
-#     encoded_img = base64.b64encode(img_bytes).decode()
-#     return encoded_img
-
-
 '''
 # DelAI
 '''
