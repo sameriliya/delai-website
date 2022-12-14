@@ -907,10 +907,12 @@ def pred(flight_number='DAL383', date=datetime.date.today()) -> np.ndarray:
     """
 
     print("\n⭐️ use case: predict")
-    from flightaware import get_processed_flight_details
+    from flightaware import get_raw_flight_details, process_flight_details
 
     # get details of new flight from API call, and remove column to pass into preprocessor
-    df_new = get_processed_flight_details(flight_number, date).drop(columns = 'FlightDate')
+    response = get_raw_flight_details(flight_number, date)
+    df_new = process_flight_details(response=response).drop(columns = 'FlightDate')
+
     X_processed = preprocess_X(df_new)
     print(X_processed)
     print('o_'+X_processed['Origin'][0])

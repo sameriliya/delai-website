@@ -125,17 +125,16 @@ def get_airport_details_dict(airport_code):
         location = f"{response_json['city']},{response_json['state']}"
         lat = response_json['latitude']
         lon = response_json['longitude']
-        return {'name':name, 'location':location, 'lat':lat, 'lon':lon}
+        return {'name':name, 'location':location, 'coord':[lon,lat]}
     else:
         print(response)
         print("Couldn't find airport")
-        return {'name':'N/A', 'location':'N/A', 'lat':'N/A', 'lon':'N/A'}
+        return {'name':'N/A', 'location':'N/A', 'coord':['N/A','N/A']}
 
-def get_processed_flight_details(flight_number='DAL383', date=datetime.date.today()):
+def process_flight_details(response):
     '''Given a flight number and date of travel, use functions to
     return a cleaned dataframe of flight details to pass into an ML model
     '''
-    response = get_raw_flight_details(flight_number=flight_number, date=date)
 
     if not response.ok:
         print('Add in actions for bad API call')
@@ -158,4 +157,5 @@ def get_processed_flight_details(flight_number='DAL383', date=datetime.date.toda
 
 
 if __name__ == '__main__':
-    print(get_processed_flight_details(flight_number='DAL383', date=datetime.date(2022,12,13)))
+    response = get_raw_flight_details(flight_number='DAL383', date=datetime.date(2022,12,13))
+    print(process_flight_details(response))
