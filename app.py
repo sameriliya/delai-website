@@ -2,11 +2,9 @@ import streamlit as st
 import datetime
 from model import pred
 from flightaware import get_raw_flight_details, get_airport_details_dict, process_flight_details
-
 import pandas as pd
 import numpy as np
 import pydeck as pdk
-
 
 st.set_page_config(
             page_title="Delai", # => Quick reference - Streamlit
@@ -14,28 +12,24 @@ st.set_page_config(
             layout="centered", # wide
             initial_sidebar_state="auto") # collapsed
 
-
-st.markdown('''
-# :airplane: DelAI :airplane:
-''')
-st.caption('Predicting delays since 2022...')
+col1, col2, col3 = st.columns(3)
+with col2:
+    st.markdown('# :airplane: DelAI :airplane:')
+    st.caption('Predicting delays since 2022...')
 
 st.markdown('''
 **Please enter your flight details** :
 ''')
-
 
 col1, col2 = st.columns(2)
 
 with col1:
     flight_number = st.text_input('Flight Number... e.g DAL383')
 
-
 with col2:
     d = st.date_input(
     "Flight date",
     datetime.date.today())
-
 
 with st.container():
     if st.button('Search for flight!'):
@@ -95,11 +89,6 @@ with st.container():
                 )
                 )
 
-
-
-
-
-
 with st.container():
     if st.button('Predict my delay!'):
         with st.spinner("Working hard to get your prediction..."):
@@ -117,9 +106,14 @@ with st.container():
                     ''')
                     with st.expander('Disclaimer'):
                         if prediction <= 15:
-                            st.markdown("It's looking good! Your flight is probably going to be on time ☺️ but it's always best to check with your airline! 👀")
+                            st.markdown("""It's looking good! Your flight is probably going to be on time ☺️ but it's always best to check with your airline! 👀
+
+                                        Have a great trip!
+                                        """)
                         else:
                             st.markdown("""You may want to give yourself some extra time at your destination.
-                                        Don't be silly and have an extra beer at the airport. Check the departure board! 👀""")
+                                        Don't be silly and have an extra beer at the airport. Check the departure board! 👀
+                                        Have a great trip!
+                                        """)
                 except:
                     st.error("Couldn't predict your flight delay for that flight number! Please try again or contact our __support team__")
