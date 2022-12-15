@@ -122,7 +122,7 @@ def get_airport_details_dict(airport_code):
 
     if response.ok:
         name = response_json['name']
-        location = f"{response_json['city']},{response_json['state']}"
+        location = f"{response_json['city']}, {response_json['state']}"
         lat = response_json['latitude']
         lon = response_json['longitude']
         return {'name':name, 'location':location, 'coord':[lon,lat]}

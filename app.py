@@ -5,6 +5,7 @@ from flightaware import get_raw_flight_details, get_airport_details_dict, proces
 import pandas as pd
 import numpy as np
 import pydeck as pdk
+from PIL import Image
 
 st.set_page_config(
             page_title="Delai", # => Quick reference - Streamlit
@@ -31,6 +32,11 @@ with col2:
     "Flight date",
     datetime.date.today())
 
+def load_image(airline_code):
+    image = Image.open(f'airline_images/{airline_code}.png')
+    return image
+
+
 with st.container():
     if st.button('Search for flight!'):
         with st.spinner("Locating your flight details..."):
@@ -47,15 +53,20 @@ with st.container():
                 arr_time = datetime.datetime.strptime(str(X_new['CRSArrTime'][0]).zfill(4),'%H%M').strftime('%H:%M')
                 s = flight['filed_ete']
                 flight_time = '{:2}h {:02}m'.format(s // 3600, s % 3600 // 60)
+                dist = flight['route_distance']
 
                 # Display variables to user
+                col1,col2 = st.columns(2)
+                col1.markdown((f'''## Your flight:'''))
+                col2.image(load_image(flight_number[:3]))
                 st.markdown(f'''
-                        ## Your flight:
-                        #### {origin['name']} to {dest['name']}:''')
-                col1, col2, col3 = st.columns(3)
+                        ##### From: {origin['name']}, {origin['location']}
+                        ##### To:   {dest['name']}, {dest['location']}''')
+                col1, col2, col3, col4 = st.columns(4)
                 col1.metric("🛫 Sched. Dep. Time", dep_time, 'Local Time', delta_color='off')
                 col2.metric("🛬 Sched. Arr. Time", arr_time, 'Local Time', delta_color='off')
                 col3.metric("🕓 Flight Time", flight_time, delta='Planned', delta_color ='off')
+                col4.metric("Distance",dist,'Miles', delta_color='off')
 
                 # Plot map
                 pydeck_df = pd.DataFrame()
@@ -98,7 +109,6 @@ with st.container():
                 try:
                     prediction = round(pred(flight_number=flight_number, date=d)*100,2)
                     st.success("Successfully predicted your chance of delay at your destination!")
-                    st.balloons()
 
                     st.markdown(f'''
                     # Our prediction:
