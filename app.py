@@ -25,17 +25,16 @@ st.markdown('''
 col1, col2 = st.columns(2)
 
 with col1:
-    flight_number = st.text_input('Flight Number... e.g DAL383')
+    flight_number = st.text_input('✈️ Flight Number...  e.g DAL383')
 
 with col2:
     d = st.date_input(
-    "Flight date",
+    "📅  Flight date",
     datetime.date.today())
 
 def load_image(airline_code):
     image = Image.open(f'airline_images/{airline_code}.png')
     return image
-
 
 with st.container():
     if st.button('Search for flight!'):
@@ -66,9 +65,10 @@ with st.container():
                 col1.metric("🛫 Sched. Dep. Time", dep_time, 'Local Time', delta_color='off')
                 col2.metric("🛬 Sched. Arr. Time", arr_time, 'Local Time', delta_color='off')
                 col3.metric("🕓 Air Time", flight_time, delta='Planned', delta_color ='off')
-                col4.metric("Distance",dist,'Miles', delta_color='off')
+                col4.metric("📍 Distance",dist,'Miles', delta_color='off')
 
-                # Plot map
+                zoom = (6300 - dist)/1200
+
                 pydeck_df = pd.DataFrame()
                 pydeck_df['from'] = origin
                 pydeck_df['to'] = dest
@@ -79,7 +79,7 @@ with st.container():
                 st.pydeck_chart(pdk.Deck(map_style=None,
                                 initial_view_state=pdk.ViewState(latitude=init_lat,
                                                longitude=init_lon,
-                                               zoom = 3.5,
+                                               zoom = zoom,
                                                bearing=0,
                                                pitch=45),
                                 layers=[
@@ -89,12 +89,13 @@ with st.container():
                                     "GreatCircleLayer",
                                     pydeck_df,
                                     pickable=True,
-                                    get_stroke_width=12,
+                                    get_stroke_width=40,
                                     get_source_position=pydeck_df['from']['coord'],
                                     get_target_position=pydeck_df['to']['coord'],
-                                    get_source_color=[64, 255, 0],
+                                    get_source_color=[255, 65, 0],
                                     get_target_color=[0, 128, 200],
                                     auto_highlight=True,
+                                    widthScale = 6,
                                 )
                                 ]
                 )
