@@ -65,7 +65,7 @@ with st.container():
                 col1, col2, col3, col4 = st.columns(4)
                 col1.metric("🛫 Sched. Dep. Time", dep_time, 'Local Time', delta_color='off')
                 col2.metric("🛬 Sched. Arr. Time", arr_time, 'Local Time', delta_color='off')
-                col3.metric("🕓 Flight Time", flight_time, delta='Planned', delta_color ='off')
+                col3.metric("🕓 Air Time", flight_time, delta='Planned', delta_color ='off')
                 col4.metric("Distance",dist,'Miles', delta_color='off')
 
                 # Plot map
