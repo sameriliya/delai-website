@@ -40,6 +40,7 @@ with st.container():
     if st.button('Search for flight!'):
         with st.spinner("Locating your flight details..."):
             response = get_raw_flight_details(flight_number, d)
+            print(response)
             X_new = process_flight_details(response=response)
             if type(X_new) != pd.DataFrame:
                 st.markdown(f"Couldn't find a flight with those details, please try again!")
@@ -113,18 +114,21 @@ with st.container():
 
                     st.markdown(f'''
                     # Our prediction:
-                    ## {round(prediction)}% chance of delay in your arrival of 30 mins or more!
+                    ## {round(prediction)}% chance of delay to your arrival of 30 mins or more!
                     ''')
                     with st.expander('Disclaimer'):
-                        if prediction <= 15:
-                            st.markdown("""It's looking good! Your flight is probably going to be on time ☺️ but it's always best to check with your airline! 👀
+                        if prediction < 20:
+                            st.markdown("""
+                                        It's looking good! Your flight is probably going to be on time 😃 but it's always best to check with your airline! 👀
 
-                                        Have a great trip!
+                                        ### Have a great trip! 🫶
                                         """)
                         else:
-                            st.markdown("""You may want to give yourself some extra time at your destination.
+                            st.markdown("""
+                                        You may want to give yourself some extra time at your destination.
                                         Don't be silly and have an extra beer at the airport. Check the departure board! 👀
-                                        Have a great trip!
+
+                                        ### Have a great trip! 🫶
                                         """)
                 except:
                     st.error("Couldn't predict your flight delay for that flight number! Please try again or contact our __support team__")
